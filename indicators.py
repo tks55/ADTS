@@ -110,3 +110,14 @@ def getADXDSTD(dataTab):
     adxDSTD = math.sqrt(dipVar + dimVar)
     return(adxDSTD)
 
+def getKURTTab(dataTab):
+    kurt30 = dataTab.ta.kurtosis()
+    kurt30 = kurt30.reset_index()
+    return(kurt30)
+
+def getKURTVal(dataTab):
+    kurtTab = getKURTTab(dataTab)
+    lenKURT = len(kurtTab)
+    lastKURT = kurtTab.at[lenKURT - 1, "KURT_30"]
+    return(lastKURT)
+
