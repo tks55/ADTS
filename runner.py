@@ -1,5 +1,7 @@
 import pandas as pd
 import indicators
+import standardize
+import formula
 
 stock = input("What stock would you like to analyze: ")
 date = input("When would you like to begin (YYYY-MM-DD): ")
@@ -9,8 +11,25 @@ data = pd.DataFrame()
 data = data.ta.ticker(stock, start = date)
 #print(dataTab)
 
-print(indicators.getRSI(data))
-print(indicators.getMACD(data))
-print(indicators.getZSCORE(data))
+rsiVal = indicators.getRSIVal(data)
+macdVal = indicators.getMACDVal(data)
+adxVal = indicators.getADXVal(data)
+adxDVal = indicators.getADXDiff(data)
+zscore = indicators.getZSCORE(data)
+
+#if less than 0, oversold, if greater than 0, overbought
+calculatedVal = formula.calculate(data)
+
+print("OVERALL VALUE: " + str(calculatedVal) + "\n" )
+print("COMPONENT VALUES: ")
+print("RSI Value: " + str(rsiVal))
+print("MACD Value: " + str(macdVal))
+print("ADX Value: " + str(adxVal))
+print("ADX Diff: " + str(adxDVal))
+print("ZSCORE: " + str(zscore))
+
+
+
+
 
 
