@@ -19,7 +19,12 @@ zscore = indicators.getZSCORE(data)
 kurtosis = indicators.getKURTVal(data)
 maDeriv = derivatives.derivInterpret(data)
 
-#if less than 0, oversold, if greater than 0, overbought
+#interpretation 
+#if a value of within the range of +/-1.8 stock is fairly neutral
+#if a value of above (or below) +/- 1.8, moderately overbought/oversold, respectively (moving out of the 50% range of data)
+#if a value of above (or below) +/- 4.1, strongly overbought/oversold, respectively (moving out of the 80% range of data)
+#if a value of above (or below) +/-8, extremely overbought/oversold, respectively (moving out of the 95% range of data)
+
 calculatedVal = formula.calculate(data)
 
 print("OVERALL VALUE: " + str(calculatedVal) + "\n" )
