@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas_ta as ta
 import mplfinance as mpl
 import math
+from sklearn.linear_model import LinearRegression
+
 
 #file with pandasTA indicators
 
@@ -121,3 +123,67 @@ def getKURTVal(dataTab):
     lastKURT = kurtTab.at[lenKURT - 1, "KURT_30"]
     return(lastKURT)
 
+def getOBVTab(dataTab):
+    obv = dataTab.ta.obv()
+    obv = obv.reset_index()
+    return(obv)
+
+def getOBVVals(dataTab, period):
+    obvTab = getOBVTab(dataTab)
+    lenOBVTab = len(obvTab)
+    obvVals = numpy.array([])
+    for i in range(period):
+        obvCurrVal = obvTab.at[lenOBVTab - period + i, "OBV"]
+        obvVals = numpy.append(obvVals, obvCurrVal)
+    return(obvVals)
+
+def getPrevDataTabC(dataTab, period):
+    data = dataTab["Close"]
+    data = data.reset_index()
+    lenData = len(data)
+    preData = numpy.array([])
+    for i in range(period):
+        dataCurrVal = data.at[lenData - period + i, "Close"]
+        preData = numpy.append(preData, dataCurrVal)
+    return(preData)
+
+def getIndexedSeries(period):
+    index = numpy.arange(period)
+    index = index.reshape(-1, 1)
+    return(index)
+
+def getOBVSlope(dataTab, period):
+    x = getIndexedSeries(period)
+    y = getOBVVals(dataTab, period)
+    model = LinearRegression().fit(x, y)
+    slope = model.coef_
+    return(slope[0])
+    
+def getPriceSlope(dataTab, period):
+    x = getIndexedSeries(period)
+    y = getPrevDataTabC(dataTab, period)
+    model = LinearRegression().fit(x, y)
+    slope = model.coef_
+    return(slope[0])
+    
+def analyzeOBVDivergence(dataTab, period):
+    obvSlope = getOBVSlope(dataTab, period)
+    priceSlope = getPriceSlope(dataTab, period)
+    obvDeterminant = obvSlope * priceSlope
+    if(obvDeterminant > 0):
+        if(priceSlope > 0):
+            return("CONFIRMING TREND UPWARD")
+        elif(priceSlope < 0):
+            return("CONFIRMING TREND DOWNWARD")
+        else:
+            return("ERROR")
+    elif(obvDeterminant < 0):
+        if(priceSlope > 0):
+            return("OPPOSING TREND DOWNWARD")
+        if(priceSlope < 0):
+            return("OPPOSING TREND UPWARD")
+        else:
+            return("ERROR")
+    else:
+        return("ERROR")
+    
