@@ -3,6 +3,7 @@ import indicators
 import standardize
 import formula
 import derivatives
+import variability
 
 stock = input("What stock would you like to analyze: ")
 date = input("When would you like to begin (YYYY-MM-DD): ")
@@ -18,6 +19,8 @@ adxDVal = indicators.getADXDiff(data)
 zscore = indicators.getZSCORE(data)
 kurtosis = indicators.getKURTVal(data)
 maDeriv = derivatives.derivInterpret(data)
+r2Val = variability.getR2(data)
+residDev = variability.getSTDResidual(data)
 
 #interpretation 
 #if a value of within the range of +/-1.8 stock is fairly neutral
@@ -29,19 +32,23 @@ calculatedVal = formula.calculate(data)
 
 print("OVERALL VALUE: " + str(calculatedVal) + "\n" )
 print("COMPONENT VALUES: ")
-print("RSI Value: " + str(rsiVal))
-print("MACD Value: " + str(macdVal))
-print("ADX Value: " + str(adxVal))
-print("ADX Diff: " + str(adxDVal))
+print("RSI VALUE: " + str(rsiVal))
+print("MACD VALUE: " + str(macdVal))
+print("ADX VALUE: " + str(adxVal))
+print("ADX DIFF: " + str(adxDVal))
 print("ZSCORE: " + str(zscore) + "\n")
 
 #higher values = more risk
 print("RISK ANALYSIS: ")
+print("R^2 VALUE: " + str(r2Val))
+
+#residual deviation still needs to be tested
+#print("RESIDUAL DEVIATION: " + str(residDev))
 print("KURTOSIS: " + str(kurtosis)  + "\n")
 
 #derivative analysis--moving averages
-print("Rate of Change Analysis: ")
-print("Moving Averages: " + maDeriv)
+print("RATE OF CHANGE ANALYSIS: ")
+print("MOVING AVERAGES: " + maDeriv)
 
 
 

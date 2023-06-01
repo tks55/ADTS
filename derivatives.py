@@ -26,20 +26,20 @@ def derivInterpret(dataTab):
     lastMACDDiff = indicators.getMACDVal(dataTab)
     if(lastMACDDiff < 0):
         if(days == 0):
-            return("Downward Trend UNDER")
+            return("DOWNWARD TREND UNDER")
         elif (days == 1 or days == 2):
-            return("Shaky Trend UNDER")
+            return("SHAKY TREND UNDER")
         elif (days == 3):
-            return("Upward Trend UNDER")
+            return("UPWARD TREND UNDER")
         else:
             return("ERROR")
     else:
         if(days == 0):
-            return("Downward Trend OVER")
+            return("DOWNWARD TREND OVER")
         elif (days == 1 or days == 2):
-            return("Shaky Trend OVER")
+            return("SHAKY TREND OVER")
         elif (days == 3):
-            return("Upward Trend OVER")
+            return("UPWARD TREND OVER")
         else:
             return("ERROR")
         
