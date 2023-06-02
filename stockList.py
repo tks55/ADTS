@@ -83,3 +83,12 @@ def t10Transport():
 def t10Util():
     stocks = ["NEE", "SO", "DUK", "SRE", "AEP", "D", "EXC", "XEL", "PCG", "ED"]
     return(stocks)
+
+def allMajor():
+    stocks = []
+    stocks = stocks + t10Commerical() + t10Communications() + t10ConsDurables() + t10ConsNonDurables() + t10ConsServices() + t10DistServices() + t10Electronics() + t10Energy() + t10Finance() + t10HealthServices() + t10HealthTech() + t10IndServices() + t10Manu() + t10Mine() + t10Misc() + t10Process() + t10Retail() + t10Tech() + t10Transport() + t10Util()
+    return(stocks)
+
+def test():
+    stocks = ["NEE", "SO"]
+    return(stocks)

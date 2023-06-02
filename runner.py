@@ -12,6 +12,7 @@ import derivatives
 import variability
 import stockList
 import time
+from datetime import datetime
 
 #global variables
 overallData = pd.DataFrame()
@@ -74,16 +75,18 @@ def mainOutput(dataTab):
 
 def autoRunner(stockNames):
     startTime = time.time()
+    inc = 0
     for stock in stockNames:
         dataTab = pd.DataFrame()
         dataTab = dataTab.ta.ticker(stock, start = "2023-01-01")
         getCalculatedValues(dataTab, stock)
+        inc = inc + 1
         currentTime = time.time()
         timeDiff = currentTime - startTime
         roundedTimeDiff = round(timeDiff, 2)  
-        print(stock + ": " + str(roundedTimeDiff) + "\n")
+        print(str(inc) + ": " + stock + ": " + str(roundedTimeDiff) + "\n")
     setTicker()
-    print(overallData)
+    return(overallData)
 
 def getCalculatedValues(dataTab, stock):
     #if you change anything within calculated values, you must change overall data dataframe as well
@@ -119,5 +122,14 @@ def setTicker():
 #mainOutput(data)
 
 #b)autoRun stocks
-stockNames = stockList.t10Util()
-print(autoRunner(stockNames))
+stockNames = stockList.allMajor()
+stockDF = autoRunner(stockNames)
+date = datetime.today().strftime('%Y-%m-%d')
+date = r"{}".format(date)
+#print(stockDF)
+
+#b.1) export autoRunStocks to csv
+
+#set to whatever folder in the python directory you wish to save to 
+fileLocation = ("stockData/" + date + r".csv")
+stockDF.to_csv(fileLocation)
