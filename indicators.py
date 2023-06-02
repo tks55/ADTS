@@ -186,4 +186,3 @@ def analyzeOBVDivergence(dataTab, period):
             return("ERROR")
     else:
         return("ERROR")
-    

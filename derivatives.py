@@ -42,4 +42,3 @@ def derivInterpret(dataTab):
             return("UPWARD TREND OVER")
         else:
             return("ERROR")
-        

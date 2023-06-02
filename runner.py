@@ -1,3 +1,9 @@
+#ignore futureWarnings--semantic changes from pandas
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+#import statements
 import pandas as pd
 import indicators
 import standardize
@@ -69,19 +75,20 @@ def mainOutput(dataTab):
 def autoRunner(stockNames):
     startTime = time.time()
     for stock in stockNames:
-        currentTime = time.time()
-        timeDiff = currentTime - startTime
-        roundedTimeDiff = round(timeDiff, 2)  
-        print(stock + ": " + str(roundedTimeDiff))
         dataTab = pd.DataFrame()
         dataTab = dataTab.ta.ticker(stock, start = "2023-01-01")
         getCalculatedValues(dataTab, stock)
+        currentTime = time.time()
+        timeDiff = currentTime - startTime
+        roundedTimeDiff = round(timeDiff, 2)  
+        print(stock + ": " + str(roundedTimeDiff) + "\n")
     setTicker()
     print(overallData)
 
 def getCalculatedValues(dataTab, stock):
     #if you change anything within calculated values, you must change overall data dataframe as well
     name = stock
+    calVal = formula.calculate(dataTab)
     rsiVal = indicators.getRSIVal(dataTab)
     macdVal = indicators.getMACDVal(dataTab)
     adxVal = indicators.getADXVal(dataTab)
@@ -90,13 +97,13 @@ def getCalculatedValues(dataTab, stock):
     kurtosis = indicators.getKURTVal(dataTab)
     maDeriv = derivatives.derivInterpret(dataTab)
     r2Val = variability.getR2(dataTab)
-    residDev = variability.getSTDResidual(dataTab)
+    #residDev = variability.getSTDResidual(dataTab)
     obvTrend = indicators.analyzeOBVDivergence(dataTab, 7)
     obvSlope = indicators.getOBVSlope(dataTab, 7)
     priceSlope = indicators.getPriceSlope(dataTab, 7)
-    data = [[name, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, r2Val, residDev, obvTrend, obvSlope, priceSlope]]
+    data = [[name, calVal, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, r2Val, obvTrend, obvSlope, priceSlope]]
     global overallData
-    tempData = pd.DataFrame(data, columns = ["ticker", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "r2Val", "residDev", "obvTrend", "obvSlope", "priceSlope"])
+    tempData = pd.DataFrame(data, columns = ["ticker", "calVal", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "r2Val", "obvTrend", "obvSlope", "priceSlope"])
     overallData = pd.concat([overallData, tempData])
     #return(overallData)
     
@@ -112,5 +119,5 @@ def setTicker():
 #mainOutput(data)
 
 #b)autoRun stocks
-stockNames = stockList.t10Retail()
+stockNames = stockList.t10Util()
 print(autoRunner(stockNames))
