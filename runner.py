@@ -33,7 +33,8 @@ def mainOutput(dataTab):
     adxDVal = indicators.getADXDiff(dataTab)
     zscore = indicators.getZSCORE(dataTab)
     kurtosis = indicators.getKURTVal(dataTab)
-    maDeriv = derivatives.derivInterpret(dataTab)
+    maDeriv = derivatives.firstDerivInterpret(dataTab)
+    maDoubleDeriv = derivatives.secondDerivInterpret(dataTab)
     r2Val = variability.getR2(dataTab)
     residDev = variability.getSTDResidual(dataTab)
     obvTrend = indicators.analyzeOBVDivergence(dataTab, 7)
@@ -66,7 +67,8 @@ def mainOutput(dataTab):
 
     #derivative analysis--moving averages
     print("RATE OF CHANGE ANALYSIS: ")
-    print("MOVING AVERAGES: " + maDeriv)
+    print("MOVING AVERAGES FIRST: " + maDeriv)
+    print("MOVING AVERAGES SECOND: " + maDoubleDeriv)
     print("OBV DIVERGENCE: " + obvTrend)
     print("OBV SLOPE: " + str(obvSlope))
     print("PRICE SLOPE: " + str(priceSlope))
@@ -98,15 +100,16 @@ def getCalculatedValues(dataTab, stock):
     adxDVal = indicators.getADXDiff(dataTab)
     zscore = indicators.getZSCORE(dataTab)
     kurtosis = indicators.getKURTVal(dataTab)
-    maDeriv = derivatives.derivInterpret(dataTab)
+    maDeriv = derivatives.firstDerivInterpret(dataTab)
+    maDoubleDeriv = derivatives.secondDerivInterpret(dataTab)
     r2Val = variability.getR2(dataTab)
     #residDev = variability.getSTDResidual(dataTab)
     obvTrend = indicators.analyzeOBVDivergence(dataTab, 7)
     obvSlope = indicators.getOBVSlope(dataTab, 7)
     priceSlope = indicators.getPriceSlope(dataTab, 7)
-    data = [[name, calVal, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, r2Val, obvTrend, obvSlope, priceSlope]]
+    data = [[name, calVal, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, maDoubleDeriv, r2Val, obvTrend, obvSlope, priceSlope]]
     global overallData
-    tempData = pd.DataFrame(data, columns = ["ticker", "calVal", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "r2Val", "obvTrend", "obvSlope", "priceSlope"])
+    tempData = pd.DataFrame(data, columns = ["ticker", "calVal", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "maDoubleDeriv", "r2Val", "obvTrend", "obvSlope", "priceSlope"])
     overallData = pd.concat([overallData, tempData])
     #return(overallData)
     
@@ -121,12 +124,12 @@ def setTicker():
 #data = retrieveInfo()
 #mainOutput(data)
 
-#b)autoRun stocks
+# #b)autoRun stocks
 stockNames = stockList.allMajor()
 stockDF = autoRunner(stockNames)
 date = datetime.today().strftime('%Y-%m-%d')
 date = r"{}".format(date)
-#print(stockDF)
+print(stockDF)
 
 #b.1) export autoRunStocks to csv
 
