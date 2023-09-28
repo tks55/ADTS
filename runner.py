@@ -93,6 +93,7 @@ def autoRunner(stockNames):
 def getCalculatedValues(dataTab, stock):
     #if you change anything within calculated values, you must change overall data dataframe as well
     name = stock
+    points = 0.0
     calVal = formula.calculate(dataTab)
     rsiVal = indicators.getRSIVal(dataTab)
     macdVal = indicators.getMACDVal(dataTab)
@@ -107,16 +108,75 @@ def getCalculatedValues(dataTab, stock):
     obvTrend = indicators.analyzeOBVDivergence(dataTab, 7)
     obvSlope = indicators.getOBVSlope(dataTab, 7)
     priceSlope = indicators.getPriceSlope(dataTab, 7)
-    data = [[name, calVal, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, maDoubleDeriv, r2Val, obvTrend, obvSlope, priceSlope]]
+    reccBuy = "NEUTRAL"
+    
+    #RSI points
+    if(rsiVal < 30):
+        points = points + 1
+    elif(rsiVal < 40):
+        points = points + 0.5
+    elif(rsiVal <= 60):
+        points = points
+    elif(rsiVal <= 70): 
+        points = points - 0.5
+    else:
+        points = points - 1
+    
+    #MACD points
+    if(macdVal < 0):
+        points = points + 1
+    else:
+        points = points - 1
+        
+    #ZSCORE points
+    if(zscore < -2):
+        points = points + 1
+    elif(zscore < -1):
+        points = points + 0.5
+    elif(zscore <= 1):
+        points = points
+    elif(zscore <= 2):
+        points = points - 0.5
+    else:
+        points = points - 1
+    
+    #maDeriv/doubleDeriv points
+    if(maDoubleDeriv == "NEGATIVE"):
+        points = points - 1
+    elif((maDeriv == "POSITIVE")):
+        points = points + 1
+    else:
+        points = points
+        
+    #OBV points
+    if((obvTrend == "CONFIRMING TREND DOWNWARD") or (obvTrend == "OPPOSING TREND DOWNWARD")):
+        points = points - 1
+    elif((obvTrend == "CONFIRMING TREND UPWARD") or (obvTrend == "OPPOSING TREND UPWARD")):
+        points = points + 1
+    else:
+        points = points
+    
+    
+    if(points >= 2.5):
+        reccBuy = "STRONG BUY"
+    elif(points >= 1):
+        reccBuy = "BUY"
+    elif(points > -1):
+        reccBuy = "NEUTRAL"
+    elif(points > - 2.5):
+        reccBuy = "SELL"
+    else:
+        reccBuy = "STRONG SELL"
+    
+    data = [[name, calVal, rsiVal, macdVal, adxVal, adxDVal, zscore, kurtosis, maDeriv, maDoubleDeriv, r2Val, obvTrend, obvSlope, priceSlope, points, reccBuy]]
     global overallData
-    tempData = pd.DataFrame(data, columns = ["ticker", "calVal", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "maDoubleDeriv", "r2Val", "obvTrend", "obvSlope", "priceSlope"])
+    tempData = pd.DataFrame(data, columns = ["ticker", "calVal", "rsiVal", "macdVal", "adxVal", "adxDVal", "zscore", "kurtosis", "maDeriv", "maDoubleDeriv", "r2Val", "obvTrend", "obvSlope", "priceSlope", "points", "recommendation"])
     overallData = pd.concat([overallData, tempData])
-    #return(overallData)
+    return tempData
     
 def setTicker():
     global overallData
     overallData = overallData.set_index("ticker")    
-
 
 #modify following section to either a) manually run for certain tickers or b) autorun stocks
 
@@ -127,6 +187,7 @@ def setTicker():
 # #b)autoRun stocks
 stockNames = stockList.allMajor()
 stockDF = autoRunner(stockNames)
+stockDF = stockDF.sort_values("points", ascending=False)
 date = datetime.today().strftime('%Y-%m-%d')
 date = r"{}".format(date)
 print(stockDF)
